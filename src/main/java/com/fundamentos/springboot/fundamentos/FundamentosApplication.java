@@ -9,6 +9,7 @@ import com.fundamentos.springboot.fundamentos.pojo.UserPojo;
 import com.fundamentos.springboot.fundamentos.repository.UserRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -69,15 +70,38 @@ public class FundamentosApplication implements CommandLineRunner {
 
 		LOGGER.info("Usuario con query methods 2: " + userRepository.findByEmailAndName("david@gmail.com", "David")
 				.orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
+
+		userRepository.findByNameLike("%Ch%")
+				.stream()
+				.forEach(user -> LOGGER.info("Usuario like: " + user));
+
+		userRepository.findByNameOrEmail(null, "ccdosorio@gmail.com")
+				.stream()
+				.forEach(user -> LOGGER.info("Usuario OR: " + user));
+
+		userRepository.findByBirthDayBetween(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 6, 2))
+				.stream()
+				.forEach(user -> LOGGER.info("Usuario rango fechas: " + user));
+
+		userRepository.findByNameLikeOrderByIdDesc("%C%")
+				.stream()
+				.forEach(user -> LOGGER.info("Usuario LIKE DESC: " + user));
+
+		userRepository.findDistinctByNameLike("Christian")
+				.stream()
+				.forEach(user -> LOGGER.info("Usuario DISTINC: " + user));
+
+
 	}
 
 	private void saveUserInDatabase() {
-		User user1 = new User("Christian", "ccdosorio@gmail.com", LocalDate.of(2021, 03, 20));
+		User user1 = new User("Christian", "ccdosorio@gmail.com", LocalDate.of(2021, 01, 20));
 		User user2 = new User("David", "david@gmail.com", LocalDate.of(2021, 05, 21));
 		User user3 = new User("Hilary", "hilary@gmail.com", LocalDate.of(2021, 10, 22));
 		User user4 = new User("Christopher", "chris@gmail.com", LocalDate.of(2021, 07, 17));
+		User user5 = new User("Carlos", "carlos@gmail.com", LocalDate.of(2021, 11, 20));
 
-		List<User> list = Arrays.asList(user1, user2, user3, user4);
+		List<User> list = Arrays.asList(user1, user2, user3, user4, user5);
 
 		list.stream().forEach(userRepository::save);
 
