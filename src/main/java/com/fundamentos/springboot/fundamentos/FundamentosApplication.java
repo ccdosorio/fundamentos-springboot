@@ -91,6 +91,10 @@ public class FundamentosApplication implements CommandLineRunner {
 				.stream()
 				.forEach(user -> LOGGER.info("Usuario DISTINC: " + user));
 
+		LOGGER.info("EL usuario a partir del named parameter es: " + userRepository.getAllByBirthDateAndEmail(LocalDate.of(2021, 10, 22), "hilary@gmail.com")
+				.orElseThrow(() ->
+						new RuntimeException("No encontro el usuario a partir del named parameter: " )));
+
 
 	}
 
