@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -50,14 +51,26 @@ public class FundamentosApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		// ejemplosAnteriores();
 		saveUserInDatabase();
+		getInformationJpqlFromUser();
+	}
+
+	private void getInformationJpqlFromUser() {
+		LOGGER.info("usuario con el método: "
+				+ userRepository.findByUserEmail("ccdosorio@gmail.com")
+				.orElseThrow( () -> new RuntimeException("No se encontró el usuario")));
+
+		userRepository.findAndSort("Chris", Sort.by("id").ascending())
+				.stream()
+				.forEach(user -> LOGGER.info("User with method con sort: " + user));
 	}
 
 	private void saveUserInDatabase() {
 		User user1 = new User("Christian", "ccdosorio@gmail.com", LocalDate.of(2021, 03, 20));
 		User user2 = new User("David", "david@gmail.com", LocalDate.of(2021, 05, 21));
 		User user3 = new User("Hilary", "hilary@gmail.com", LocalDate.of(2021, 10, 22));
+		User user4 = new User("Christopher", "chris@gmail.com", LocalDate.of(2021, 07, 17));
 
-		List<User> list = Arrays.asList(user1, user2, user3);
+		List<User> list = Arrays.asList(user1, user2, user3, user4);
 
 		list.stream().forEach(userRepository::save);
 
