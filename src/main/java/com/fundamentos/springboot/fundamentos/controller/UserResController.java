@@ -1,10 +1,8 @@
 package com.fundamentos.springboot.fundamentos.controller;
 
-import com.fundamentos.springboot.fundamentos.caseuse.CreateUser;
-import com.fundamentos.springboot.fundamentos.caseuse.DeleteUser;
-import com.fundamentos.springboot.fundamentos.caseuse.GetUser;
-import com.fundamentos.springboot.fundamentos.caseuse.UpdateUser;
+import com.fundamentos.springboot.fundamentos.caseuse.*;
 import com.fundamentos.springboot.fundamentos.entity.User;
+import com.fundamentos.springboot.fundamentos.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +17,14 @@ public class UserResController {
     private final CreateUser createUser;
     private final DeleteUser deleteUser;
     private final UpdateUser updateUser;
+    private final PageUser pageUser;
 
-    public UserResController(GetUser getUser, CreateUser createUser, DeleteUser deleteUser, UpdateUser updateUser) {
+    public UserResController(GetUser getUser, CreateUser createUser, DeleteUser deleteUser, UpdateUser updateUser, PageUser pageUser) {
         this.getUser = getUser;
         this.createUser = createUser;
         this.deleteUser = deleteUser;
         this.updateUser = updateUser;
+        this.pageUser = pageUser;
     }
 
     @GetMapping("/")
@@ -48,6 +48,9 @@ public class UserResController {
         return new ResponseEntity<User>(updateUser.update(newUser, id), HttpStatus.OK);
     }
 
-
+    @GetMapping("/pageable")
+    List<User> getUserPageable(@RequestParam int page, @RequestParam int size) {
+        return pageUser.getAllPagination(page, size);
+    }
 
 }
